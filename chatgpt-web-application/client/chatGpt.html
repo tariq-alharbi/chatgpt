@@ -1,0 +1,93 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <title>ChatGPT Front-end</title>
+    <link rel="stylesheet" href="./assets/css/highlight.min.css">
+    <link rel="stylesheet" href="./assets/css/index.css">
+    <link rel="icon" href="favicon.ico" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <meta name="description"
+          content="Experience OpenAI API with this simple web application"
+    />
+</head>
+<body>
+<div id="response-list">
+</div>
+<button id="signout">sign out</button>
+<div id="bottom-container">
+    <div id="regenerate-button-container">
+        <button id="regenerate-response-button">
+            Regenerate Response
+        </button>
+    </div>
+    <div id="model-select-container">
+        <label for="model-select">Select model:</label>
+        <select id="model-select">
+            <option value="chatgpt" selected>ChatGPT (Improved version of GPT-3 and can understand as well as generate natural language or code)</option>
+            <option value="gpt">GPT-3 (Understand and generate natural language )</option>
+            <option value="image">Create Image (Create AI image using DALL·E models)</option>
+            <option value="whisper">Whisper(AI speech recognition model)</option>
+        </select>
+    </div>
+    <div id="input-container">
+        <input type="file" id="whisper-file" accept=".mp3,.mp4,.mpeg,.mpga,.m4a,.wav,.webm" style="display:none;">
+        <div id="prompt-input" contentEditable></div>
+        <button id="submit-button"></button>
+        
+    </div>
+    
+</div>
+<script src="./assets/js/highlight.min.js"></script>
+<script src="./assets/js/showdown.min.js"></script>
+<script src="./assets/js/index.js"></script>
+</body>
+
+<style>
+
+
+
+#signout {
+    position: absolute;
+  top: 10px;
+  right: 10px;
+  background-color: #000;
+  color: #fff;
+  padding: 10px;
+  border-radius: 5px;
+  cursor: pointer;
+  background: #FF4742;
+  border: 1px solid #FF4742;
+  border-radius: 6px;
+  box-shadow: rgba(0, 0, 0, 0.1) 1px 2px 4px;
+  box-sizing: border-box;
+  color: #FFFFFF;
+  cursor: pointer;
+  display: inline-block;
+  font-family: nunito,roboto,proxima-nova,"proxima nova",sans-serif;
+  font-size: 16px;
+  font-weight: 800;
+  line-height: 16px;
+  min-height: 40px;
+  outline: 0;
+  padding: 12px 14px;
+  text-align: center;
+  text-rendering: geometricprecision;
+  text-transform: none;
+  user-select: none;
+  -webkit-user-select: none;
+  touch-action: manipulation;
+  vertical-align: middle;
+}
+
+#signout:hover,
+#signout:active {
+  background-color: initial;
+  background-position: 0 0;
+  color: #FF4742;
+}
+
+#signout:active {
+  opacity: .5;
+}
+    </style>
+</html>

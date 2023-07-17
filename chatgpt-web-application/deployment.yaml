@@ -1,0 +1,83 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: chatgpt-deployment
+  labels:
+    app: chatgpt
+spec:
+  replicas: 4
+  selector:
+    matchLabels:
+      app: chatgpt
+  template:
+    metadata:
+      labels:
+        app: chatgpt
+    spec:
+      containers:
+      - name: chatgpt
+        image: ttssaat/chatgpt:1.5.4.4
+        env:
+            - name: OPENAI_API_KEY
+              valueFrom:
+                configMapKeyRef:
+                  key: OPENAI_API_KEY
+                  name: chatgpt-configmap
+            - name: MYSQL_HOST
+              valueFrom:
+                configMapKeyRef:
+                  key: MYSQL_HOST
+                  name: chatgpt-configmap
+            - name: MYSQL_USER
+              valueFrom:
+                configMapKeyRef:
+                  key: MYSQL_USER
+                  name: chatgpt-configmap
+            - name: MYSQL_PASSWORD
+              valueFrom:
+                configMapKeyRef:
+                  key: MYSQL_PASSWORD
+                  name: chatgpt-configmap
+            - name: MYSQL_DATABASE
+              valueFrom:
+                configMapKeyRef:
+                  key: MYSQL_DATABASE
+                  name: chatgpt-configmap
+            - name: REDIS_USER
+              valueFrom:
+                configMapKeyRef:
+                  key: REDIS_USER
+                  name: chatgpt-configmap
+            - name: REDIS_PASSWORD
+              valueFrom:
+                configMapKeyRef:
+                  key: REDIS_PASSWORD
+                  name: chatgpt-configmap
+            - name: REDIS_HOST
+              valueFrom:
+                configMapKeyRef:
+                  key: REDIS_HOST
+                  name: chatgpt-configmap
+            - name: LDAP_USER
+              valueFrom:
+                configMapKeyRef:
+                  key: LDAP_USER
+                  name: chatgpt-configmap
+            - name: LDAP_PASSWORD
+              valueFrom:
+                configMapKeyRef:
+                  key: LDAP_PASSWORD
+                  name: chatgpt-configmap
+            - name: LDAP_HOST
+              valueFrom:
+                configMapKeyRef:
+                  key: LDAP_HOST
+                  name: chatgpt-configmap
+      requests:
+        memory: "128Mi"
+        cpu: "500m"
+      limits:
+        memory: "256Mi"
+        cpu: "1000m"
+        ports:
+        - containerPort: 3001

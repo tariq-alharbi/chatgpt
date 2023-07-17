@@ -1,0 +1,17 @@
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: chatgpt-configmap
+data:
+  OPENAI_API_KEY: ""
+  MYSQL_HOST: ""
+  MYSQL_USER: ""
+  MYSQL_PASSWORD: ""
+  MYSQL_DATABASE: ""
+  REDIS_USER: ""
+  REDIS_PASSWORD: ""
+  REDIS_HOST: ""
+  LDAP_HOST: ""
+  LDAP_USER: ""
+  LDAP_PASSWORD: ""
+  
