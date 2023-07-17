@@ -1,92 +1,12 @@
 apiVersion: v1
 kind: Service
 metadata:
-  annotations:
-    service.beta.kubernetes.io/alicloud-loadbalancer-address-type: intranet
-    service.beta.kubernetes.io/alicloud-loadbalancer-force-override-listeners: 'true'
-    service.beta.kubernetes.io/alicloud-loadbalancer-id: lb-l4vbzibrk32iavv038fi3
-  finalizers:
-    - service.k8s.alibaba/resources
-  labels:
-    service.beta.kubernetes.io/hash: a3dcf456f8b7150b5b06c542f786d84691575cb7f81911565704f2c0
-    service.k8s.alibaba/loadbalancer-id: lb-l4vbzibrk32iavv038fi3
-  managedFields:
-    - apiVersion: v1
-      fieldsType: FieldsV1
-      fieldsV1:
-        'f:metadata':
-          'f:annotations':
-            .: {}
-            'f:service.beta.kubernetes.io/alicloud-loadbalancer-address-type': {}
-            'f:service.beta.kubernetes.io/alicloud-loadbalancer-force-override-listeners': {}
-            'f:service.beta.kubernetes.io/alicloud-loadbalancer-id': {}
-        'f:spec':
-          'f:allocateLoadBalancerNodePorts': {}
-          'f:externalTrafficPolicy': {}
-          'f:internalTrafficPolicy': {}
-          'f:ipFamilyPolicy': {}
-          'f:ports':
-            .: {}
-            'k:{"port":80,"protocol":"TCP"}':
-              .: {}
-              'f:port': {}
-              'f:protocol': {}
-              'f:targetPort': {}
-          'f:selector': {}
-          'f:sessionAffinity': {}
-          'f:type': {}
-      manager: ACK-Console Apache-HttpClient
-      operation: Update
-      time: '2023-06-15T14:13:11Z'
-    - apiVersion: v1
-      fieldsType: FieldsV1
-      fieldsV1:
-        'f:metadata':
-          'f:finalizers':F
-            .: {}
-            'v:"service.k8s.alibaba/resources"': {}
-      manager: cloud-controller-manager
-      operation: Update
-      time: '2023-06-15T14:13:11Z'
-    - apiVersion: v1
-      fieldsType: FieldsV1
-      fieldsV1:
-        'f:metadata':
-          'f:labels':
-            .: {}
-            'f:service.beta.kubernetes.io/hash': {}
-            'f:service.k8s.alibaba/loadbalancer-id': {}
-        'f:status':
-          'f:loadBalancer':
-            'f:ingress': {}
-      manager: cloud-controller-manager
-      operation: Update
-      subresource: status
-      time: '2023-06-15T14:13:13Z'
-  name: test-2
-
-  uid: af6decc9-7a48-46c5-acbc-2089f574089e
+  name: chatgpt
 spec:
-  allocateLoadBalancerNodePorts: true
-  clusterIP: 172.16.174.74
-  clusterIPs:
-    - 172.16.174.74
-  externalTrafficPolicy: Local
-  healthCheckNodePort: 30194
-  internalTrafficPolicy: Cluster
-  ipFamilies:
-    - IPv4
-  ipFamilyPolicy: SingleStack
+  type: LoadBalancer
   ports:
-    - nodePort: 30765
+    - protocol: TCP
       port: 80
-      protocol: TCP
       targetPort: 3001
   selector:
-    app: chatgpt
-  sessionAffinity: None
-  type: LoadBalancer
-status:
-  loadBalancer:
-    ingress:
-      - ip: 192.168.239.40
+    app: mapapi
