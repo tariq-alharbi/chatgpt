@@ -410,18 +410,7 @@ resource "alicloud_instance" "ldap" {
 
 
 
-////////////////////////////////////////////////////////////
 
-
-//output
-
-output "management_ip_address" {
-  value = alicloud_eip.defult.ip_address
-}
-
-output "public_ip_address" {
-  value = alicloud_eip.publicEniIP.ip_address
-}
 
 
 
@@ -587,7 +576,18 @@ resource "alicloud_cs_kubernetes_node_pool" "flannel" {
 }
 
 
+////////////////////////////////////////////////////////////
 
+
+//output
+
+output "management_ip_address" {
+  value = alicloud_eip.defult.ip_address
+}
+
+output "public_ip_address" {
+  value = alicloud_eip.publicEniIP.ip_address
+}
 
 
 
