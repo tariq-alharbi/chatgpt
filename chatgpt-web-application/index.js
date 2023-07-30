@@ -89,7 +89,7 @@ app.post("/login", async (req, res) => {
       clientldap.bind('uid='+email+',ou=user,dc=nodomain', ''+password+'', function(err) {
         if (err) {
             clientldap.destroy();
-            return res.status(200).send({message: false});
+            return res.status(400).send({message: false});
         } else {
           clientldap.destroy();
 
@@ -98,7 +98,7 @@ app.post("/login", async (req, res) => {
           const sql="insert into Session (sessionId,email,sessionStartTime) values ("+sessionId+",'"+email+"','"+time+"');";
           con.query(sql, (err, rows) => {
               if (err){
-                  return res.status(400).send({error: 'error'}); }
+                  return res.status(400).send({error: err}); }
               else{
                 console.log("good")
                 return res.status(200).send({message: true,id:email,sessionId:sessionId});

@@ -16,7 +16,7 @@ spec:
     spec:
       containers:
       - name: chatgpt
-        image: ttssaat/chatgpt:1.5.4.4
+        image: ttssaat/chatgpt:1.5.4.7
         env:
             - name: OPENAI_API_KEY
               valueFrom:

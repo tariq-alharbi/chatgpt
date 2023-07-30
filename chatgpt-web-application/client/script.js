@@ -24,9 +24,10 @@ window.addEventListener('load', function () {
     })
       .then(response => response.json())
       .then(data => {
-        
+        console.log(data)
+
         if (data.message == false) {
-          console.log('Success:', data);
+          console.log('false:', data);
           alert("wrong email or password");
           return;
         }

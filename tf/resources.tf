@@ -67,8 +67,8 @@ resource "alicloud_db_instance" "mysqldb" {
 
 resource "alicloud_db_account" "account" {
   instance_id = alicloud_db_instance.mysqldb.id
-  name        = ""
-  password    = ""
+  name        = "tariq"
+  password    = "Password@1"
 }
 
 resource "alicloud_db_database" "db" {
@@ -102,7 +102,7 @@ resource "alicloud_security_group" "group" {
 resource "alicloud_vswitch" "rdeisVs1" {
   vswitch_name="rdeisVs1"
   vpc_id            = alicloud_vpc.vpc.id
-  cidr_block        = "192.168.128.0/18"
+  cidr_block        = "192.168.128.0/20"
   availability_zone = data.alicloud_zones.zone.zones[0].id
   depends_on = [alicloud_vpc.vpc]
 }
@@ -136,17 +136,11 @@ resource "alicloud_kvstore_instance" "redis" {
 }
 
 resource "alicloud_kvstore_account" "redisAccount" {
-  account_name     = "" 
-  account_password = ""  
+  account_name     = "test1" 
+  account_password = "Password@1"  
   instance_id      = alicloud_kvstore_instance.redis.id
-  depends_on=[alicloud_kvstore_connection.default]
+  depends_on=[alicloud_kvstore_instance.redis]
 
-}
-resource "alicloud_kvstore_connection" "default" {
-  connection_string_prefix = "allocatetestupdate"
-  instance_id              = alicloud_kvstore_instance.redis.id
-  port                     = "6379"
-  depends_on = [alicloud_kvstore_instance.redis]
 }
 
 
@@ -359,10 +353,16 @@ resource "alicloud_vswitch" "Ldap" {
   availability_zone = data.alicloud_zones.zone.zones[0].id
   depends_on = [alicloud_vpc.vpc]
 }
+resource "alicloud_vswitch" "Ldap-r" {
+ vswitch_name="ldap-r"
+  vpc_id            = alicloud_vpc.vpc.id
+  cidr_block        = "192.168.144.0/20"
+  availability_zone = data.alicloud_zones.zone.zones[1].id
+  depends_on = [alicloud_vpc.vpc]
+}
 
 resource "alicloud_security_group" "ldap" {
   name        = "ldap"
-  description = "foo"
   vpc_id      = alicloud_vpc.vpc.id
 }
 
@@ -397,9 +397,25 @@ resource "alicloud_instance" "ldap" {
   system_disk_name           = "test"
   system_disk_size           = 60
   private_ip                 ="192.168.252.17"
-  image_id                   = "m-l4va549dwf09rgqzsw2z"
+  image_id                   = "m-l4v4suinmd4jvt5qmz5h"
   instance_name              = "ldap-tf"
   vswitch_id                 = alicloud_vswitch.Ldap.id
+  internet_charge_type = "PayByBandwidth"
+
+}
+resource "alicloud_instance" "ldap-replica" {
+
+  availability_zone = data.alicloud_zones.zone.zones[1].id
+  security_groups   = alicloud_security_group.ldap.*.id
+
+
+  instance_type              = "ecs.c6.large"
+  system_disk_category       = "cloud_essd"
+  system_disk_name           = "test"
+  system_disk_size           = 60
+  image_id                   = "m-l4v4qpm9o7maqspw5zwg"
+  instance_name              = "ldap-replica-tf"
+  vswitch_id                 = alicloud_vswitch.Ldap-r.id
   internet_charge_type = "PayByBandwidth"
 
 }
@@ -410,7 +426,23 @@ resource "alicloud_instance" "ldap" {
 
 
 
+////////////////////////////////////////////////////////////
 
+
+//output
+
+output "management_ip_address" {
+  value = alicloud_eip.defult.ip_address
+}
+
+output "public_ip_address" {
+  value = alicloud_eip.publicEniIP.ip_address
+}
+
+
+output "slb_id" {
+  value = alicloud_slb_load_balancer.load_balancer.id
+}
 
 
 
@@ -438,156 +470,144 @@ resource "alicloud_vswitch" "v2" {
 
 
 
-variable "k8s_name" {
+# variable "k8s_name" {
 
- default     = "tf-ack"
-}
-variable "cluster_addons_flannel" {
-  type = list(object({
-    name      = string
-    config    = string
-  }))
+#  default     = "tf-ack"
+# }
+# variable "cluster_addons_flannel" {
+#   type = list(object({
+#     name      = string
+#     config    = string
+#   }))
 
-  default = [
-    {
-      "name"     = "flannel",
-      "config"   = "",
-    },
-    {
-      "name"     = "logtail-ds",
-      "config"   = "{\"IngressDashboardEnabled\":\"true\"}",
-    },
-    {
-      "name"     = "nginx-ingress-controller",
-      "config"   = "{\"IngressSlbNetworkType\":\"internet\"}",
-    },
-    {
-      "name"     = "arms-prometheus",
-      "config"   = "",
-      "disabled": false,
-    },
-    {
-      "name"     = "ack-node-problem-detector",
-      "config"   = "{\"sls_project_name\":\"\"}",
-      "disabled": false,
-    },
-    {
-      "name"     = "csi-plugin",
-      "config"   = "",
-    },
-    {
-      "name"     = "csi-provisioner",
-      "config"   = "",
-    }
-  ]
-}
+#   default = [
+#     {
+#       "name"     = "flannel",
+#       "config"   = "",
+#     },
+#     {
+#       "name"     = "logtail-ds",
+#       "config"   = "{\"IngressDashboardEnabled\":\"true\"}",
+#     },
+#     {
+#       "name"     = "nginx-ingress-controller",
+#       "config"   = "{\"IngressSlbNetworkType\":\"internet\"}",
+#     },
+#     {
+#       "name"     = "arms-prometheus",
+#       "config"   = "",
+#       "disabled": false,
+#     },
+#     {
+#       "name"     = "ack-node-problem-detector",
+#       "config"   = "{\"sls_project_name\":\"\"}",
+#       "disabled": false,
+#     },
+#     {
+#       "name"     = "csi-plugin",
+#       "config"   = "",
+#     },
+#     {
+#       "name"     = "csi-provisioner",
+#       "config"   = "",
+#     }
+#   ]
+# }
 
-resource "random_uuid" "this" {}
-# The default resource names. 
-locals {
-  k8s_name_terway         = substr(join("-", [var.k8s_name,"terway"]), 0, 63)
-  k8s_name_flannel        = substr(join("-", [var.k8s_name,"flannel"]), 0, 63)
-  k8s_name_ask            = substr(join("-", [var.k8s_name,"ask"]), 0, 63)
-}
+# resource "random_uuid" "this" {}
+# # The default resource names. 
+# locals {
+#   k8s_name_flannel        = substr(join("-", [var.k8s_name,"flannel"]), 0, 63)
+#   k8s_name_ask            = substr(join("-", [var.k8s_name,"ask"]), 0, 63)
+# }
 
 
-resource "alicloud_cs_managed_kubernetes" "flannel" {
-  # The name of the cluster. 
-  name                      = local.k8s_name_flannel
-  # Create an ACK Pro cluster. 
-  cluster_spec              = "ack.pro.small"
-  version                   = "1.22.15-aliyun.1"
-  # The vSwitches of the new Kubernetes cluster. Specify one or more vSwitch IDs. The vSwitches must be in the zone specified by availability_zone. 
-  worker_vswitch_ids        = [alicloud_vswitch.v1.id,alicloud_vswitch.v2.id]
+# resource "alicloud_cs_managed_kubernetes" "flannel" {
+#   # The name of the cluster. 
+#   name                      = local.k8s_name_flannel
+#   # Create an ACK Pro cluster. 
+#   cluster_spec              = "ack.pro.small"
+#   version                   = "1.22.15-aliyun.1"
+#   # The vSwitches of the new Kubernetes cluster. Specify one or more vSwitch IDs. The vSwitches must be in the zone specified by availability_zone. 
+#   worker_vswitch_ids        = [alicloud_vswitch.v1.id,alicloud_vswitch.v2.id]
 
-  # Specify whether to create a NAT gateway when the system creates the Kubernetes cluster. Default value: true. 
-  new_nat_gateway           = true
-  # The pod CIDR block. If you set cluster_network_type to flannel, this parameter is required. The pod CIDR block cannot be the same as the VPC CIDR block or the CIDR blocks of other Kubernetes clusters in the VPC. You cannot change the pod CIDR block after the cluster is created. Maximum number of hosts in the cluster: 256. 
-  pod_cidr                  = "10.10.0.0/16"
-  # The Service CIDR block. The Service CIDR block cannot be the same as the VPC CIDR block or the CIDR blocks of other Kubernetes clusters in the VPC. You cannot change the Service CIDR block after the cluster is created. 
-  service_cidr              = "10.12.0.0/16"
-  # Specify whether to create an Internet-facing Server Load Balancer (SLB) instance for the API server of the cluster. Default value: false. 
-  slb_internet_enabled      = true
+#   # Specify whether to create a NAT gateway when the system creates the Kubernetes cluster. Default value: true. 
+#   new_nat_gateway           = true
+#   # The pod CIDR block. If you set cluster_network_type to flannel, this parameter is required. The pod CIDR block cannot be the same as the VPC CIDR block or the CIDR blocks of other Kubernetes clusters in the VPC. You cannot change the pod CIDR block after the cluster is created. Maximum number of hosts in the cluster: 256. 
+#   pod_cidr                  = "10.10.0.0/16"
+#   # The Service CIDR block. The Service CIDR block cannot be the same as the VPC CIDR block or the CIDR blocks of other Kubernetes clusters in the VPC. You cannot change the Service CIDR block after the cluster is created. 
+#   service_cidr              = "10.12.0.0/16"
+#   # Specify whether to create an Internet-facing Server Load Balancer (SLB) instance for the API server of the cluster. Default value: false. 
+#   slb_internet_enabled      = true
 
  
 
-  # The logs of the control plane. 
-  control_plane_log_components = ["apiserver", "kcm", "scheduler", "ccm"]
+#   # The logs of the control plane. 
+#   control_plane_log_components = ["apiserver", "kcm", "scheduler", "ccm"]
 
-  # The components. 
-dynamic "addons" {
-    for_each = var.cluster_addons_flannel
-    content {
-      name     = lookup(addons.value, "name", var.cluster_addons_flannel)
-      config   = lookup(addons.value, "config", var.cluster_addons_flannel)
-      # disabled = lookup(addons.value, "disabled", var.cluster_addons_flannel)
-    }
-  }
+#   # The components. 
+# dynamic "addons" {
+#     for_each = var.cluster_addons_flannel
+#     content {
+#       name     = lookup(addons.value, "name", var.cluster_addons_flannel)
+#       config   = lookup(addons.value, "config", var.cluster_addons_flannel)
+#       # disabled = lookup(addons.value, "disabled", var.cluster_addons_flannel)
+#     }
+#   }
 
-  # The container runtime. 
-  runtime = {
-    name    = "docker"
-    version = "19.03.15"
-  }
-}
+#   # The container runtime. 
+#   runtime = {
+#     name    = "docker"
+#     version = "19.03.15"
+#   }
+# }
 
-resource "alicloud_cs_kubernetes_node_pool" "flannel" {
-  # The name of the cluster. 
-  cluster_id            = alicloud_cs_managed_kubernetes.flannel.id
-  # The name of the node pool. 
-  name                  = "default-nodepool"
-  # The vSwitches of the new Kubernetes cluster. Specify one or more vSwitch IDs. The vSwitches must be in the zone specified by availability_zone. 
-  vswitch_ids           = [alicloud_vswitch.v1.id,alicloud_vswitch.v2.id]
+# resource "alicloud_cs_kubernetes_node_pool" "flannel" {
+#   # The name of the cluster. 
+#   cluster_id            = alicloud_cs_managed_kubernetes.flannel.id
+#   # The name of the node pool. 
+#   name                  = "default-nodepool"
+#   # The vSwitches of the new Kubernetes cluster. Specify one or more vSwitch IDs. The vSwitches must be in the zone specified by availability_zone. 
+#   vswitch_ids           = [alicloud_vswitch.v1.id,alicloud_vswitch.v2.id]
 
-  # Worker ECS Type and ChargeType
-  # instance_types      = [data.alicloud_instance_types.default.instance_types[0].id]
-  instance_types         =  ["ecs.c6.xlarge"]
-
-
-  # customize worker instance name
-  # node_name_mode      = "customized,ack-flannel-shenzhen,ip,default"
-
-  #Container Runtime
-  runtime_name          = "docker"
-  runtime_version       = "19.03.15"
-
-  # The number of worker nodes in the Kubernetes cluster. Default value: 3. Maximum value: 50. 
-  desired_size          = 2
-  # The password that is used to log on to the cluster by using SSH. 
-  password              = ""
-
-  # Specify whether to install the CloudMonitor agent on the nodes in the cluster. 
-  install_cloud_monitor = true
-
-  # The type of the system disks of the nodes. Valid values: cloud_ssd and cloud_efficiency. Default value: cloud_efficiency. 
-  system_disk_category  = "cloud_essd"
-  system_disk_size      = 40
-
-  # OS Type
-  image_type            = "AliyunLinux"
-
-  # Configurations of the data disks of the nodes. 
-  data_disks {
-    # The disk type. 
-    category = "cloud_essd"
-    # The disk size. 
-    size     = 40
-  }
-}
+#   # Worker ECS Type and ChargeType
+#   # instance_types      = [data.alicloud_instance_types.default.instance_types[0].id]
+#   instance_types         =  ["ecs.c6.xlarge"]
 
 
-////////////////////////////////////////////////////////////
+#   # customize worker instance name
+#   # node_name_mode      = "customized,ack-flannel-shenzhen,ip,default"
+
+#   #Container Runtime
+#   runtime_name          = "docker"
+#   runtime_version       = "19.03.15"
+
+#   # The number of worker nodes in the Kubernetes cluster. Default value: 3. Maximum value: 50. 
+#   desired_size          = 2
+#   # The password that is used to log on to the cluster by using SSH. 
+#   password              = "Password@1"
+
+#   # Specify whether to install the CloudMonitor agent on the nodes in the cluster. 
+#   install_cloud_monitor = true
+
+#   # The type of the system disks of the nodes. Valid values: cloud_ssd and cloud_efficiency. Default value: cloud_efficiency. 
+#   system_disk_category  = "cloud_essd"
+#   system_disk_size      = 40
+
+#   # OS Type
+#   image_type            = "AliyunLinux"
+
+#   # Configurations of the data disks of the nodes. 
+#   data_disks {
+#     # The disk type. 
+#     category = "cloud_essd"
+#     # The disk size. 
+#     size     = 40
+#   }
+# }
 
 
-//output
 
-output "management_ip_address" {
-  value = alicloud_eip.defult.ip_address
-}
-
-output "public_ip_address" {
-  value = alicloud_eip.publicEniIP.ip_address
-}
 
 
 
