@@ -353,8 +353,8 @@ resource "alicloud_vswitch" "Ldap" {
   availability_zone = data.alicloud_zones.zone.zones[0].id
   depends_on = [alicloud_vpc.vpc]
 }
-resource "alicloud_vswitch" "Ldap-r" {
- vswitch_name="ldap-r"
+resource "alicloud_vswitch" "ldap-replica" {
+ vswitch_name="ldap-replica"
   vpc_id            = alicloud_vpc.vpc.id
   cidr_block        = "192.168.144.0/20"
   availability_zone = data.alicloud_zones.zone.zones[1].id
